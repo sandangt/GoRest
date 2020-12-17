@@ -1,22 +1,22 @@
-package Repositories_test
+package repository_test
 
 import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/ginkgo"
-	"GoNeo/Repositories"
-	"GoNeo/Entities"
+	"GoRest/repository"
+	"GoRest/entity"
 )
 
 var _ = Describe("User repository", func() {
 
 	Describe("User not found", func() {
 		Context("When using non-existed user's identityID", func() {
-			It("Should return empty Entities.User struct", func() {
+			It("Should return empty entity.User struct", func() {
 				By("Using identityID not_exist", func() {
-					Expect(Repositories.ReadUserByIdentityID("not_exist")).To(Equal(Entities.User{}))
+					Expect(repository.ReadUserByIdentityID("not_exist")).To(Equal(entity.User{}))
 				})
 				By("Using identityID testIdentityID", func() {
-					Expect(Repositories.ReadUserByIdentityID("testIdentityID")).To(Equal(Entities.User{}))
+					Expect(repository.ReadUserByIdentityID("testIdentityID")).To(Equal(entity.User{}))
 				})
 			})
 		})
@@ -24,12 +24,12 @@ var _ = Describe("User repository", func() {
 
 	Describe("User exists", func() {
 		Context("When using valid user's identityID", func() {
-			It("Should not return empty Entities.User struct", func() {
+			It("Should not return empty entity.User struct", func() {
 				By("Using identityID amadmin", func() {
-					Expect(Repositories.ReadUserByIdentityID("amadmin")).ShouldNot(Equal(Entities.User{}))
+					Expect(repository.ReadUserByIdentityID("amadmin")).ShouldNot(Equal(entity.User{}))
 				})
 				By("Using other valid identityID", func() {
-					Expect(Repositories.ReadUserByIdentityID("fooagencygroupuser@fooagencygroup.com")).ShouldNot(Equal(Entities.User{}))
+					Expect(repository.ReadUserByIdentityID("fooagencygroupuser@fooagencygroup.com")).ShouldNot(Equal(entity.User{}))
 				})
 			})
 		})

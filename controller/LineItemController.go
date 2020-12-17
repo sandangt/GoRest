@@ -10,7 +10,7 @@ import (
 
 func ReadLineItemsByUserIdentityID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	data, code := service.ReadLineItemsByUserIdentityID(mux.Vars(r)["identityID"])
-	w.WriteHeader(code)
+	w.WriteHeader(http.StatusOK)
+	data:= service.ReadLineItemsByUserIdentityID(mux.Vars(r)["identityID"])
 	json.NewEncoder(w).Encode(data)
 }

@@ -5,13 +5,11 @@ import (
 	"GoRest/entity"
 )
 
-var publisherList = []string {"facebook","twitter","snapchat","pinterest","linkedin"}
-
-func ReadLineItemsByUserIdentityID(identityID string) (interface{}, int) {
+func ReadLineItemsByUserIdentityID(identityID string) interface{} {
 	// Check if user with given identityID exists
 	// Entities.User{} : empty struct
 	if (repository.ReadUserByIdentityID(identityID) == entity.User{}) {
-		return entity.Message { Content: "User not found" }, 400
+		return entity.Message { Content: "User not found" }
 	}
-	return repository.ReadLineItemsByUserIdentityID(identityID), 200
+	return repository.ReadLineItemsByUserIdentityID(identityID)
 }
