@@ -18,12 +18,12 @@ func main() {
 	defer repository.CloseDriver()
 	
 	// Init router
-	r := mux.NewRouter()
+	router := mux.NewRouter()
 
 	// Route handles & endpoints
-	app.Routing(r)
+	app.Routing(router)
 
 	// Start server
-	log.Fatal(http.ListenAndServe(":9062", r))
+	log.Fatal(http.ListenAndServe(":9062", router))
 }
 

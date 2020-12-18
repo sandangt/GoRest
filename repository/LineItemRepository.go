@@ -7,7 +7,16 @@ import (
 	
 	"GoRest/entity"
 )
-func ReadLineItemsByUserIdentityID(identityID string) []entity.LineItem {
+func ReadLineItemsByUserIdentityID(identityID,
+									lineItemID,
+									lineItemName,
+									isContinuous,
+									archived,
+									publisher,
+									creatorCompanyName,
+									brandCompanyName,
+									brandName,
+									initiativeName interface{},) []entity.LineItem {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
 	lineItems, err := session.ReadTransaction( func(tx neo4j.Transaction) (interface{}, error) {
@@ -20,7 +29,16 @@ func ReadLineItemsByUserIdentityID(identityID string) []entity.LineItem {
 		MATCH (lineItem)-[:CREATED_BY]->(creator:User)-[:EMPLOYED_BY]->(creatorCompany:Company)
 		WITH user, lineItem, creatorCompany
 		MATCH (lineItem)-[:BELONGS_TO]->(initiative:Initiative)-[:MARKETED_BY]->(brand:Brand)-[:OWNED_BY]->(brandCompany:Company)
-		RETURN DISTINCT user.identityID as IdentityID, lineItem.id as LineItemID, creatorCompany.id as CreatorCompanyID, creatorCompany.name as CreatorCompanyName, brandCompany.id as BrandCompanyID, brandCompany.name as BrandCompanyName, brand.id as BrandID, brand.name as BrandName, initiative.id as InitiativeID, initiative.name as InitiativeName, lineItem.publisher as Publisher, lineItem.archived as Archived order by LineItemID;`, identityID)
+		WHERE (lineItem.name=~'.*%v.*' AND creatorCompany.name=~'.*%v.*' AND brandCompany.name=~'.*%v.*' AND brand.name=~'.*%v.*' AND initiative.name=~'.*%v.*')
+		OPTIONAL MATCH (lineItem)
+		WHERE (lineItem.id='%v' AND lineItem.isContinuous='%v' AND lineItem.archived='%v' AND lineItem.publisher='%v')
+		RETURN DISTINCT user.identityID as IdentityID, lineItem.id as LineItemID, creatorCompany.id as CreatorCompanyID, creatorCompany.name as CreatorCompanyName, brandCompany.id as BrandCompanyID, brandCompany.name as BrandCompanyName, brand.id as BrandID, brand.name as BrandName, initiative.id as InitiativeID, initiative.name as InitiativeName, lineItem.publisher as Publisher, lineItem.archived as Archived order by LineItemID;`, identityID, lineItemName, creatorCompanyName, brandCompanyName, brandName, initiativeName, lineItemID, isContinuous, archived, publisher)
+		// , brandCompany.name=~'.*%v.*', brand.name=~'.*%v.*', initiative.name=~'.*%v.*'
+		// , brandCompanyName, brandName, initiativeName)
+		// , lineItemID, isContinuous, archived, publisher)
+		// OPTIONAL MATCH (lineItem)
+		// WHERE lineItem.id='%v', lineItem.isContinuous='%v', lineItem.archived='%v', lineItem.publisher='%v'
+		// WHERE lineItem.id='%v', lineItem.name=~'.*%v.*', lineItem.isContinuous='%v', lineItem.archived='%v', lineItem.publisher='%v', creatorCompany.name=~'.*%v.*', brandCompany.name=~'.*%v.*', brand.name=~'.*%v.*', initiative.name=~'.*%v.*'
 		result, err := tx.Run(query, nil)
 		if err != nil {
 			return nil, err

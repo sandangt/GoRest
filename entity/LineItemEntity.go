@@ -10,6 +10,6 @@ type LineItem struct {
 	BrandName interface{} `json:"BrandName"`
 	InitiativeID interface{} `json:"InitiativeID"`
 	InitiativeName interface{} `json:"InitiativeName"`
-	PublisherName interface{} `json:"PublisherName"`
+	Publisher interface{} `json:"Publisher"`
 	Archived interface{} `json:"Archived"`
 }
