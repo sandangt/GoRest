@@ -2,12 +2,15 @@ package repository
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	
 	"GoRest/entity"
 )
-func ReadLineItemsByUserIdentityID(identityID string, params map[string]string, optionalParamsStr string) []entity.LineItem {
+func ReadLineItemsByUserIdentityID(identityID string, params map[string]string) []entity.LineItem {
+	optionalParamsStr := makeInternalParamsQuery(params)
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
 	lineItems, err := session.ReadTransaction( func(tx neo4j.Transaction) (interface{}, error) {
@@ -60,6 +63,30 @@ func parseLineItems(result neo4j.Result) []entity.LineItem {
 		arr = append(arr, entity.LineItem {LineItemID: lineItemID, LineItemName: lineItemName, Publisher: publisher, IsContinuous: isContinuous, Archived: archived, IdentityID: identityID, CreatorCompanyID: creatorCompanyID, CreatorCompanyName: creatorCompanyName, BrandCompanyID: brandCompanyID, BrandCompanyName: brandCompanyName, BrandID: brandID, BrandName: brandName, InitiativeID: initiativeID, InitiativeName: initiativeName})
 	}
 	return arr
+}
+
+func makeInternalParamsQuery(params map[string]string) string {
+	var optionalParams []string
+	
+	if params["publisher"] != "" {
+		optionalParams = append(optionalParams, fmt.Sprintf("publisher:\"%v\"", params["publisher"]))
+	}
+	
+	if params["lineItemID"] != "" {
+		optionalParams = append(optionalParams, fmt.Sprintf("lineItemID:\"%v\"", params["lineItemID"]))
+	}
+	
+	if params["isContinuous"] != "" {
+		temp, _ := strconv.ParseBool(params["isContinuous"])
+		optionalParams = append(optionalParams, fmt.Sprintf("isContinuous:%v", temp))
+	}
+	
+	if params["archived"] != "" {
+		temp, _ := strconv.ParseBool(params["archived"])
+		optionalParams = append(optionalParams, fmt.Sprintf("archived:%v", temp))
+	}
+	
+	return strings.Join(optionalParams,",")
 }
 
 func ReadAllPublishers() []interface{} {
