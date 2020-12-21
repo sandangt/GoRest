@@ -19,6 +19,11 @@ func ReadLineItemsByUserIdentityID(identityID,
 									brandName,
 									initiativeName string,) interface{} {
 	var optionalParams []string
+	
+	if publisher != "" {
+		optionalParams = append(optionalParams, fmt.Sprintf("publisher:\"%v\"", publisher))
+	}
+	
 	if isContinuous != "" {
 		temp, _ := strconv.ParseBool(isContinuous)
 		optionalParams = append(optionalParams, fmt.Sprintf("isContinuous:%v", temp))
@@ -27,10 +32,6 @@ func ReadLineItemsByUserIdentityID(identityID,
 	if archived != "" {
 		temp, _ := strconv.ParseBool(archived)
 		optionalParams = append(optionalParams, fmt.Sprintf("archived:%v", temp))
-	}
-	
-	if publisher != "" {
-		optionalParams = append(optionalParams, fmt.Sprintf("publisher:\"%v\"", publisher))
 	}
 	
 	return repository.ReadLineItemsByUserIdentityID(identityID,
