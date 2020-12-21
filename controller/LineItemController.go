@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	
 	"github.com/gorilla/mux"
 	"GoRest/service"
 	"GoRest/util"
@@ -32,6 +31,7 @@ func ReadLineItemsByUserIdentityID(res http.ResponseWriter, req *http.Request) {
 	brandCompanyName := req.FormValue("brandCompanyName")
 	brandName := req.FormValue("brandName")
 	initiativeName := req.FormValue("initiativeName")
+	
 	data:= service.ReadLineItemsByUserIdentityID(identityID, 
 												lineItemID,
 												lineItemName,
@@ -42,7 +42,6 @@ func ReadLineItemsByUserIdentityID(res http.ResponseWriter, req *http.Request) {
 												brandCompanyName,
 												brandName,
 												initiativeName,)
-//	str := fmt.Sprintf("test:%v, test1:%v, test2:%v, test3:%v", req.FormValue("test"), req.FormValue("test1"), req.FormValue("test2"), req.FormValue("test3"))
-//	fmt.Println(str)
+												
 	util.PackingSendingData(res, req, http.StatusOK, &data)
 }

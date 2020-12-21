@@ -12,4 +12,5 @@ func Routing(router *mux.Router) {
 	router.Use(middleware.CheckUserExist)
 	router.Use(middleware.CheckPublisher)
 	router.Use(middleware.CheckArchived)
+	router.Use(middleware.CheckContinuousStatus)
 }

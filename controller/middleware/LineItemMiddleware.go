@@ -2,14 +2,16 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 	"GoRest/service"
 	"GoRest/util"
 	)
 
-var availablePublishers []interface{} = []interface{} { "facebook", "twitter", "snapchat", "pinterest", "linkedin" }
+//var availablePublishers []interface{} = []interface{} { "facebook", "twitter", "snapchat", "pinterest", "linkedin" }
 
 func CheckPublisher(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		availablePublishers := service.ReadAllPublishers()
 		publisher := req.FormValue("publisher")
 		if publisher == "" || findInSlice(availablePublishers, publisher) {
 			next.ServeHTTP(res, req)
@@ -22,11 +24,23 @@ func CheckPublisher(next http.Handler) http.Handler {
 
 func CheckArchived(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		archived := req.FormValue("archived")
+		archived := strings.ToLower(req.FormValue("archived"))
 		if archived == "" || archived == "true" || archived == "false" {
 			next.ServeHTTP(res, req)
 		} else {
 			data:= service.InvalidArchivedStatus()
+			util.PackingSendingData(res, req, http.StatusBadRequest, &data)
+		}	
+	})
+}
+
+func CheckContinuousStatus(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		isContinuous := strings.ToLower(req.FormValue("isContinuous"))
+		if isContinuous == "" || isContinuous == "true" || isContinuous == "false" {
+			next.ServeHTTP(res, req)
+		} else {
+			data:= service.InvalidContinuousStatus()
 			util.PackingSendingData(res, req, http.StatusBadRequest, &data)
 		}	
 	})
