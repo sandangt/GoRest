@@ -7,14 +7,7 @@ import (
 	
 	"GoRest/entity"
 )
-func ReadLineItemsByUserIdentityID(identityID,
-									lineItemID,
-									lineItemName,
-									creatorCompanyName,
-									brandCompanyName,
-									brandName,
-									initiativeName,
-									optionalParamsStr string, ) []entity.LineItem {
+func ReadLineItemsByUserIdentityID(identityID string, params map[string]string, optionalParamsStr string) []entity.LineItem {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
 	lineItems, err := session.ReadTransaction( func(tx neo4j.Transaction) (interface{}, error) {
@@ -34,7 +27,7 @@ func ReadLineItemsByUserIdentityID(identityID,
 			AND brand.name=~'.*%v.*' 
 			AND initiative.name=~'.*%v.*'
 		)
-		RETURN lineItem.id as LineItemID, lineItem.name as LineItemName, lineItem.publisher as Publisher, lineItem.isContinuous as IsContinuous, lineItem.archived as Archived, user.identityID as IdentityID, creatorCompany.id as CreatorCompanyID, creatorCompany.name as CreatorCompanyName, brandCompany.id as BrandCompanyID, brandCompany.name as BrandCompanyName, brand.id as BrandID, brand.name as BrandName, initiative.id as InitiativeID, initiative.name as InitiativeName order by LineItemID;`, identityID, optionalParamsStr, lineItemName, creatorCompanyName, brandCompanyName, brandName, initiativeName)
+		RETURN lineItem.id as LineItemID, lineItem.name as LineItemName, lineItem.publisher as Publisher, lineItem.isContinuous as IsContinuous, lineItem.archived as Archived, user.identityID as IdentityID, creatorCompany.id as CreatorCompanyID, creatorCompany.name as CreatorCompanyName, brandCompany.id as BrandCompanyID, brandCompany.name as BrandCompanyName, brand.id as BrandID, brand.name as BrandName, initiative.id as InitiativeID, initiative.name as InitiativeName order by LineItemID;`, identityID, optionalParamsStr, params["lineItemName"], params["creatorCompanyName"], params["brandCompanyName"], params["brandName"], params["initiativeName"])
 		result, err := tx.Run(query, nil)
 		if err != nil {
 			return nil, err

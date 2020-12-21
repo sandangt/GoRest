@@ -8,40 +8,28 @@ import (
 	"GoRest/entity"
 )
 
-func ReadLineItemsByUserIdentityID(identityID,
-									lineItemID,
-									lineItemName,
-									isContinuous, 
-									archived,
-									publisher,
-									creatorCompanyName,
-									brandCompanyName,
-									brandName,
-									initiativeName string,) interface{} {
+func ReadLineItemsByUserIdentityID(identityID string, params map[string]string) interface{} {
 	var optionalParams []string
 	
-	if publisher != "" {
-		optionalParams = append(optionalParams, fmt.Sprintf("publisher:\"%v\"", publisher))
+	if params["publisher"] != "" {
+		optionalParams = append(optionalParams, fmt.Sprintf("publisher:\"%v\"", params["publisher"]))
 	}
 	
-	if isContinuous != "" {
-		temp, _ := strconv.ParseBool(isContinuous)
+	if params["lineItemID"] != "" {
+		optionalParams = append(optionalParams, fmt.Sprintf("lineItemID:\"%v\"", params["lineItemID"]))
+	}
+	
+	if params["isContinuous"] != "" {
+		temp, _ := strconv.ParseBool(params["isContinuous"])
 		optionalParams = append(optionalParams, fmt.Sprintf("isContinuous:%v", temp))
 	}
 	
-	if archived != "" {
-		temp, _ := strconv.ParseBool(archived)
+	if params["archived"] != "" {
+		temp, _ := strconv.ParseBool(params["archived"])
 		optionalParams = append(optionalParams, fmt.Sprintf("archived:%v", temp))
 	}
 	
-	return repository.ReadLineItemsByUserIdentityID(identityID,
-													lineItemID,
-													lineItemName,
-													creatorCompanyName,
-													brandCompanyName,
-													brandName,
-													initiativeName,
-													strings.Join(optionalParams,","),)
+	return repository.ReadLineItemsByUserIdentityID(identityID, params, strings.Join(optionalParams,","))
 }
 
 func InvalidPublisher() interface{} {
