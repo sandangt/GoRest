@@ -68,20 +68,20 @@ func parseLineItems(result neo4j.Result) []entity.LineItem {
 func makeInternalParamsQuery(params map[string]string) string {
 	var optionalParams []string
 	
-	if params["publisher"] != "" {
+	if strings.Compare(params["publisher"], "") != 0 {
 		optionalParams = append(optionalParams, fmt.Sprintf("publisher:\"%v\"", params["publisher"]))
 	}
 	
-	if params["lineItemID"] != "" {
+	if strings.Compare(params["lineItemID"], "") != 0 {
 		optionalParams = append(optionalParams, fmt.Sprintf("lineItemID:\"%v\"", params["lineItemID"]))
 	}
 	
-	if params["isContinuous"] != "" {
+	if strings.Compare(params["isContinuous"], "") != 0 {
 		temp, _ := strconv.ParseBool(params["isContinuous"])
 		optionalParams = append(optionalParams, fmt.Sprintf("isContinuous:%v", temp))
 	}
 	
-	if params["archived"] != "" {
+	if strings.Compare(params["archived"], "") != 0 {
 		temp, _ := strconv.ParseBool(params["archived"])
 		optionalParams = append(optionalParams, fmt.Sprintf("archived:%v", temp))
 	}

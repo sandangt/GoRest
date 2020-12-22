@@ -7,11 +7,10 @@ import (
 )
 
 var _ = Describe("Line Item repository", func() {
-	// Init list of arrays as empty string map
-	testArrayParams := make(map[string]string)
 	
 	Describe("No optional params", func() {
-		
+		// Init list of arrays as empty string map
+		testArrayParams := make(map[string]string)	
 		Describe("Empty line item list", func() {
 			Context("When using non-existed user's identityID", func() {
 				It("Should return empty []entity.LineItem list", func() {
@@ -55,30 +54,17 @@ var _ = Describe("Line Item repository", func() {
 			Context("When using valid identityID and 1 invalid external parameter", func() {
 				It("Should return empty []entity.LineItem list", func() {
 					By("Using brandName not_exist", func() {
+						testArrayParams := make(map[string]string)
 						testArrayParams["brandName"] = "not_exist"
 						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).To(Equal(0))
 					})
 					By("Using initiativeName not_exist", func() {
+						testArrayParams := make(map[string]string)
 						testArrayParams["initiativeName"] = "not_exist"
 						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).To(Equal(0))
 					})
 					By("Using creatorCompanyName not_exist", func() {
-						testArrayParams["initiativeName"] = "not_exist"
-						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).To(Equal(0))
-					})
-				})
-			})
-			Context("When using valid identityID and 1 valid external parameter", func() {
-				It("Should return empty []entity.LineItem list", func() {
-					By("Using brandName not_exist", func() {
-						testArrayParams["brandName"] = "not_exist"
-						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).To(Equal(0))
-					})
-					By("Using initiativeName not_exist", func() {
-						testArrayParams["initiativeName"] = "not_exist"
-						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).To(Equal(0))
-					})
-					By("Using creatorCompanyName not_exist", func() {
+						testArrayParams := make(map[string]string)
 						testArrayParams["initiativeName"] = "not_exist"
 						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).To(Equal(0))
 					})
@@ -87,6 +73,7 @@ var _ = Describe("Line Item repository", func() {
 			Context("When using valid identityID and 2 or more invalid external parameters", func() {
 				It("Should return empty []entity.LineItem list", func() {
 					By("Using brandName not_exist, initiativeName not_exist, creatorCompanyName not_exist", func() {
+						testArrayParams := make(map[string]string)
 						testArrayParams["brandName"] = "not_exist"
 						testArrayParams["initiativeName"] = "not_exist"
 						testArrayParams["initiativeName"] = "not_exist"
@@ -95,7 +82,72 @@ var _ = Describe("Line Item repository", func() {
 				})
 			})
 		})
-		
+		Describe("Line item list contains number of elements", func() {
+			Context("When using valid identityID and 1 valid external parameters", func() {
+				It("Should not return empty []entity.LineItem list", func() {
+					By("Using CreatorCompanyName Bar Client Group", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["creatorCompanyName"] = "Bar Client Group"
+						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).ShouldNot(Equal(0))
+					})
+					By("Using BrandCompanyName Bar Client", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["brandCompanyName"] = "Bar Client"
+						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).ShouldNot(Equal(0))
+					})
+					By("Using BrandName Bar Brand one", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["brandName"] = "Bar Brand one"
+						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).ShouldNot(Equal(0))
+					})
+				})
+			})
+			Context("When using valid identityID and 2 or more valid external parameters", func() {
+				It("Should return empty []entity.LineItem list", func() {
+					By("Using CreatorCompanyName Bar Client Group, BrandCompanyName Bar Client, BrandCompanyName Bar Brand one", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["creatorCompanyName"] = "Bar Client Group"
+						testArrayParams["brandCompanyName"] = "Bar Client"
+						testArrayParams["brandName"] = "Bar Brand one"
+						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).ShouldNot(Equal(0))
+					})
+				})
+			})
+		})
 	})
-
+	
+	Describe("Internal optional params", func() {
+		Describe("Line item list contains number of elements", func() {
+			Context("When using valid identityID and 1 valid internal parameter", func() {
+				It("Should not return empty []entity.LineItem list", func() {
+					By("Using publisher facebook", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["facebook"] = "facebook"
+						Expect(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams)[0].Publisher).To(Equal("facebook"))
+					})
+					By("Using archived false", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["archived"] = "true"
+						Expect(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams)[1].Archived).To(Equal(true))
+					})
+					By("Using isContinuous true", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["isContinuous"] = "false"
+						Expect(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams)[3].IsContinuous).To(Equal(false))
+					})
+				})
+			})
+			Context("When using valid identityID and 2 or more valid external parameters", func() {
+				It("Should return empty []entity.LineItem list", func() {
+					By("Using valid publisher, archived and isContinuous status", func() {
+						testArrayParams := make(map[string]string)
+						testArrayParams["facebook"] = "facebook"
+						testArrayParams["isContinuous"] = "false"
+						testArrayParams["archived"] = "true"
+						Expect(len(repository.ReadLineItemsByUserIdentityID("amadmin", testArrayParams))).ShouldNot(Equal(0))
+					})
+				})
+			})
+		})
+	})
 })
