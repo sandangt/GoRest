@@ -83,7 +83,7 @@ var _ = Describe("Line Item repository", func() {
 			})
 		})
 		Describe("Line item list contains number of elements", func() {
-			Context("When using valid identityID and 1 valid external parameters", func() {
+			Context("When using valid identityID and 1 valid external parameter", func() {
 				It("Should not return empty []entity.LineItem list", func() {
 					By("Using CreatorCompanyName Bar Client Group", func() {
 						testArrayParams := make(map[string]string)

@@ -16,15 +16,9 @@ go build
 ```
 ## Packages that have unit tests:
 - Repositories
-- Services
 ## Test:
 - Repositories:
 ```bash
 cd $GOPATH/src/GoRest/Repositories
-go test
-```
-- Services
-```bash
-cd $GOPATH/src/GoRest/Services
 go test
 ```
